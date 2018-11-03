@@ -77,6 +77,19 @@ TEST_CASE("constructor") {
         CHECK(s == char_sequence_ci_assign("AaB", 3));
     }
 
+    /*SUBCASE("from_C_str") {
+        char_sequence a("abc");
+        CHECK(a.size() == 3);
+        CHECK(a == "abc");
+        CHECK(a == char_sequence("abc", 3));
+        CHECK(a == char_sequence("abcdff", 3));
+
+        char_sequence_ci ci_a("ABC");
+        CHECK(ci_a.size() == 3);
+        CHECK(ci_a == "ABC");
+        CHECK(ci_a == char_sequence_ci("ABCeef", 3));
+    }*/
+
     SUBCASE("copy constructor") {
         char_sequence_ci_assign s("AaB", 3);
         char_sequence_ci_assign s_copy(s);
