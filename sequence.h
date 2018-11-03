@@ -248,13 +248,15 @@ template<class T, class Traits>
 constexpr typename sequence<T, Traits>::size_type
 sequence<T, Traits>::find(sequence v, sequence::size_type pos) const noexcept {
     if (pos > _size) {
-        throw std::runtime_error("Index out of bounds");
+        throw std::out_of_range("Index out of bounds");
     }
     if (v._size > _size) {
         return npos;
     }
+    sequence<T, Traits> s;
     for (size_type i = pos; i < _size - v._size; ++i) {
-        if (std::memcmp(head + i, v.head, v._size * sizeof(T)) == 0) {
+        s = subseq(pos, v._size);
+        if (s == v) {
             return i;
         }
     }
