@@ -209,7 +209,7 @@ template<class T, class Traits>
 typename sequence<T, Traits>::size_type
 sequence<T, Traits>::copy(T *dest, sequence::size_type count, sequence::size_type pos) const {
     if (pos > _size) {
-        throw std::runtime_error("Index out of bounds");
+        throw std::out_of_range("Index out of bounds");
     }
     for (size_type i = 0; i < std::min(count, _size - pos); ++i) {
         Traits::assign(dest[i], head[i + pos]);
@@ -239,7 +239,7 @@ constexpr int sequence<T, Traits>::compare(sequence v) const noexcept { // min(l
 template<class T, class Traits>
 constexpr sequence<T, Traits> sequence<T, Traits>::subseq(sequence::size_type pos, sequence::size_type count) const {
     if (pos > _size) {
-        throw std::runtime_error("Index out of bounds");
+        throw std::out_of_range("Index out of bounds");
     }
     return sequence<T, Traits>(head + pos, std::min(count, head - pos));
 }
@@ -318,7 +318,7 @@ namespace std {
     std::size_t hash<sequence<T, Traits>>::operator()(const sequence<T, Traits> &s) const noexcept {
         std::size_t res = 0;
         for (std::size_t i = 0; i < s.size(); ++i) {
-            res+= std::hash(s[i]);
+            res += std::hash(s[i]);
         }
         return res;
     }
