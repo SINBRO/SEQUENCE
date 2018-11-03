@@ -84,22 +84,22 @@ struct sequence {
     constexpr size_type rfind(sequence v, size_type pos = npos) const noexcept;
 
     template<class T2, class Traits2>
-    friend constexpr bool operator==(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept;
+    friend constexpr bool operator==(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept;
 
     template<class T2, class Traits2>
-    friend constexpr bool operator!=(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept;
+    friend constexpr bool operator!=(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept;
 
     template<class T2, class Traits2>
-    friend constexpr bool operator<(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept;
+    friend constexpr bool operator<(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept;
 
     template<class T2, class Traits2>
-    friend constexpr bool operator>(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept;
+    friend constexpr bool operator>(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept;
 
     template<class T2, class Traits2>
-    friend constexpr bool operator<=(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept;
+    friend constexpr bool operator<=(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept;
 
     template<class T2, class Traits2>
-    friend constexpr bool operator>=(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept;
+    friend constexpr bool operator>=(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept;
 
 private:
     size_type _size = 0;
@@ -241,7 +241,7 @@ constexpr sequence<T, Traits> sequence<T, Traits>::subseq(sequence::size_type po
     if (pos > _size) {
         throw std::out_of_range("Index out of bounds");
     }
-    return sequence<T, Traits>(head + pos, std::min(count, head - pos));
+    return sequence<T, Traits>(head + pos, std::min(count, _size - pos));
 }
 
 template<class T, class Traits>
@@ -279,32 +279,32 @@ sequence<T, Traits>::rfind(sequence v, sequence::size_type pos) const noexcept {
 }
 
 template<class T2, class Traits2>
-constexpr bool operator==(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept {
+constexpr bool operator==(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept {
     return lhs.compare(rhs) == 0;
 }
 
 template<class T2, class Traits2>
-constexpr bool operator!=(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept {
+constexpr bool operator!=(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept {
     return !(lhs == rhs);
 }
 
 template<class T2, class Traits2>
-constexpr bool operator<(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept {
+constexpr bool operator<(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept {
     return lhs.compare(rhs) == -1;
 }
 
 template<class T2, class Traits2>
-constexpr bool operator>(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept {
+constexpr bool operator>(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept {
     return rhs < lhs;
 }
 
 template<class T2, class Traits2>
-constexpr bool operator<=(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept {
+constexpr bool operator<=(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept {
     return !(lhs > rhs);
 }
 
 template<class T2, class Traits2>
-constexpr bool operator>=(sequence<T2, Traits2> lhs, sequence<T2, Traits2> rhs) noexcept {
+constexpr bool operator>=(sequence<T2, Traits2> const & lhs, sequence<T2, Traits2> const & rhs) noexcept {
     return !(lhs < rhs);
 }
 

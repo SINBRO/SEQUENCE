@@ -1,9 +1,24 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include "doctest.h"
-#include "sequence.h"
 #include <string>
 #include <exception>
+#include <vector>
+#include "sequence.h"
+
+#if 0
+#define subseq(a, pos, n) a.substr(pos, n)
+#define remove_prefix(a, n) a.erase(0, n)
+#define remove_suffix(a, n) a.erase(a.size() - n)
+#else
+  #if 0
+    #define subseq(a, pos, n) a.substr(pos, n)
+  #else
+    #define subseq(a, pos, n) a.subseq(pos, n)
+  #endif
+#define remove_prefix(a, n) a.remove_prefix(n)
+#define remove_suffix(a, n) a.remove_suffix(n)
+#endif
 
 struct case_insensitive_char_traits : public std::char_traits<char> {
     static char to_upper(char ch) { return std::toupper((unsigned char) ch); }
@@ -43,20 +58,20 @@ struct case_insensitive_assign_char_traits : public std::char_traits<char> {
     }
 };
 
-template<class T, class Traits>
-using seq = sequence<T, Traits>;
-using char_sequence = seq<char, std::char_traits<char>>;
-using char_sequence_ci = seq<char, case_insensitive_char_traits>;
-using char_sequence_ci_assign = seq<char, case_insensitive_assign_char_traits>;
+using int_sequence = sequence<int, std::char_traits<int>>;
+using char_sequence = sequence<char, std::char_traits<char>>;
+using char_sequence_ci = sequence<char, case_insensitive_char_traits>;
+using char_sequence_ci_assign = sequence<char, case_insensitive_assign_char_traits>;
 
 TEST_CASE("constructor") {
     SUBCASE("empty") {
         char_sequence s;
         char_sequence_ci s2;
         char_sequence_ci_assign s3;
+        int_sequence s4;
     }
 
-    SUBCASE("from seq") {
+    SUBCASE("from sequence") {
         char_sequence_ci_assign s("AaB", 3);
         CHECK(s.size() == 3);
         CHECK(s == char_sequence_ci_assign("AaB", 3));
@@ -67,6 +82,15 @@ TEST_CASE("constructor") {
         char_sequence_ci_assign s_copy(s);
         CHECK(s_copy.size() == 3);
         CHECK(s == s_copy);
+    }
+
+    SUBCASE("int sequence") {
+        int x[3] = {1, 2, 3};
+        int_sequence s(&x[1], 2);
+        CHECK(s.size() == 2);
+        std::vector<int> y = {2, 3, 4, 5};
+        int_sequence s2(y.data() + 1, 3);
+        CHECK(s2.size() == 3);
     }
 }
 
@@ -90,14 +114,24 @@ TEST_CASE("iterators") {
 TEST_CASE("element access") {
     SUBCASE("operator[]") {
         char_sequence_ci_assign s("ABCDI", 5);
-        CHECK(s[0] == 'a');
-        CHECK(s[4] == 'i');
+        CHECK(s[0] == 'A');
+        CHECK(s[4] == 'I');
+    }
+
+    SUBCASE("int sequence") {
+        int x[3] = {1, 2, 3};
+        int_sequence s(&x[1], 2);
+        CHECK(s.at(0) == 2);
+        std::vector<int> y = {2, 3, 4, 5};
+        int_sequence s2(y.data() + 1, 3);
+        CHECK(s2.at(0) == 3);
+        CHECK_THROWS_AS(s2.at(-1), std::out_of_range);
     }
 
     SUBCASE("at") {
         char_sequence_ci_assign s("ABCDI", 5);
-        CHECK(s.at(0) == 'a');
-        CHECK(s.at(4) == 'i');
+        CHECK(s.at(0) == 'A');
+        CHECK(s.at(4) == 'I');
         CHECK_THROWS_AS(s.at(5), std::out_of_range);
     }
 
@@ -127,23 +161,23 @@ TEST_CASE("capacity") {
 }
 
 TEST_CASE("modifiers") {
-//    SUBCASE("remove_prefix") {
-//        char_sequence_ci_assign s("ABCDI", 5);
-//        s.remove_prefix(2);
-//        CHECK(s == char_sequence_ci_assign("CDI", 3));
-//
-//        s.remove_prefix(3);
-//        CHECK(s.empty());
-//    }
-//
-//    SUBCASE("remove_suffix") {
-//        char_sequence_ci_assign s("ABCDI", 5);
-//        s.remove_suffix(2);
-//        CHECK(s == char_sequence_ci_assign("ABC", 3));
-//
-//        s.remove_suffix(3);
-//        CHECK(s.empty());
-//    }
+    SUBCASE("remove_prefix") {
+        char_sequence_ci_assign s("ABCDI", 5);
+        remove_prefix(s, 2);
+        CHECK(s == char_sequence_ci_assign("CDI", 3));
+
+        remove_prefix(s, 3);
+        CHECK(s.empty());
+    }
+
+    SUBCASE("remove_suffix") {
+        char_sequence_ci_assign s("ABCDI", 5);
+        remove_suffix(s, 2);
+        CHECK(s == char_sequence_ci_assign("ABC", 3));
+
+        remove_suffix(s, 3);
+        CHECK(s.empty());
+    }
 
     SUBCASE("swap") {
         char_sequence_ci_assign a("AAAAAAAAA", 9);
@@ -191,6 +225,9 @@ TEST_CASE("operations") {
     }
 
     SUBCASE("subseq") {
+        char_sequence cs1("abab");
+        CHECK(subseq(cs1, 1, 2) == char_sequence("ba"));
 
+        CHECK(subseq(subseq(cs1, 2, 3), 0, 1) == char_sequence("a"));
     }
 }
